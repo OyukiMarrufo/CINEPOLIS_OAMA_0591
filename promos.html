@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <title>CINEPOLIS - Promociones</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { 
+      margin: 0; 
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; 
+      background-color: #03081e; 
+      color: white; 
+      display: flex; 
+      flex-direction: column; 
+      min-height: 100vh; 
+      overflow-x: hidden;
+    }
+
+    /* Barra de navegación */
+    nav { 
+      background-color: #0a1128; 
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between; 
+      padding: 12px 24px; 
+    }
+    .logo { font-size: 24px; font-weight: bold; text-decoration: none; color: white; margin-right: 15px; }
+    .nav-links { display: flex; gap: 15px; align-items: center; }
+    .nav-links a { color: white; text-decoration: none; font-size: 14px; padding: 6px 12px; border-radius: 6px; }
+    .nav-links a.active { border: 1px solid white; background-color: #1d3557; }
+    .icons { display: flex; gap: 10px; }
+    .btn-icon { background-color: #1d3557; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; text-decoration: none; display: inline-block; }
+
+    /* Encabezado Promociones */
+    .promo-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 25px 50px 15px 50px;
+    }
+    .promo-title-container {
+      position: relative;
+      padding-bottom: 8px;
+    }
+    .promo-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+    .promo-title-container::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background-color: #2563eb;
+      border-radius: 2px;
+    }
+    .btn-cerrar-modal {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 14px;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .btn-cerrar-box {
+      background-color: #3b82f6;
+      color: white;
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    /* Grid de Promociones */
+    .promos-container {
+      display: flex;
+      gap: 20px;
+      padding: 10px 50px;
+      flex-wrap: wrap;
+    }
+
+    /* Tarjetas de Promociones estilo Imagen */
+    .card-promo {
+      width: 215px;
+      height: 340px;
+      border-radius: 20px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      background-color: #0a1b42;
+    }
+    .card-promo:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 25px rgba(59, 130, 246, 0.4);
+    }
+
+    .card-promo-img {
+      height: 200px;
+      width: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .card-promo-body {
+      flex: 1;
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      text-align: left;
+    }
+    .card-promo-body h3 {
+      margin: 0 0 8px 0;
+      font-size: 18px;
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1.2;
+    }
+    .card-promo-body p {
+      margin: 0;
+      font-size: 12px;
+      color: #d1d5db;
+      line-height: 1.35;
+      font-weight: 500;
+    }
+
+    /* Modal Flotante para detalles de Promoción */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    .modal-content {
+      background-color: #0a1b42;
+      border: 1px solid #2563eb;
+      color: white;
+      border-radius: 16px;
+      max-width: 500px;
+      width: 100%;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+      animation: fadeIn 0.2s ease-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .modal-img-banner {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .modal-close-btn {
+      position: absolute;
+      top: 12px;
+      right: 15px;
+      background: rgba(0, 0, 0, 0.6);
+      color: white;
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    .modal-body {
+      padding: 25px;
+      text-align: left;
+    }
+    .modal-body h2 {
+      margin-top: 0;
+      color: #ffffff;
+      font-size: 22px;
+    }
+    .modal-body p {
+      color: #cbd5e1;
+      font-size: 14px;
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+    .modal-body .terminos {
+      background-color: #03081e;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      color: #94a3b8;
+      border-left: 3px solid #3b82f6;
+      margin-bottom: 20px;
+    }
+    .btn-aprovechar-promo {
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 15px;
+      cursor: pointer;
+      text-align: center;
+    }
+    .btn-aprovechar-promo:hover { background-color: #1d4ed8; }
+
+    main { flex: 1; }
+
+    /* Footer Escolar */
+    footer { 
+      background-color: #0a1128; 
+      text-align: center; 
+      padding: 15px; 
+      font-size: 14px; 
+      border-top: 1px solid rgba(255,255,255,0.1); 
+      margin-top: auto;
+    }
+
+    @media (max-width: 768px) {
+      .promo-header { padding: 20px 20px 10px 20px; }
+      .promos-container { padding: 10px 20px; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Barra de navegación principal -->
+  <nav>
+    <div style="display: flex; align-items: center;">
+      <a href="index.html" class="logo">cinépolis</a>
+      <div class="nav-links">
+        <a href="index.html">Películas</a>
+        <a href="alimentos.html">Alimentos</a>
+        <a href="club.html">Club Cinépolis</a>
+        <a href="promos.html" class="active">Promos</a>
+        <a href="especiales.html">Especiales</a>
+        <a href="coleccionables.html">Coleccionables</a>
+      </div>
+    </div>
+    <div class="icons">
+      <a href="buscar.html" class="btn-icon">&#128269;</a>
+      <a href="perfil.html" class="btn-icon">&#128100;</a>
+    </div>
+  </nav>
+
+  <main>
+    <!-- Encabezado Promociones -->
+    <div class="promo-header">
+      <div class="promo-title-container">
+        <span class="promo-title">Promociones</span>
+      </div>
+      <a href="index.html" class="btn-cerrar-modal">
+        Cerrar <span class="btn-cerrar-box">✕</span>
+      </a>
+    </div>
+
+    <!-- Contenedor de Promociones estilo Imagen -->
+    <div class="promos-container">
+
+      <!-- Apartado 1: ¡Qué ofertón! -->
+      <div class="card-promo" onclick="abrirModalPromo(1)">
+        <img class="card-promo-img" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSnUov2GcOR5eoD1jGypt4p07aKcqb9QPhdDy6kBSHOxX5u3fksKoJdB0KM&s=10" alt="¡Qué ofertón!">
+        <div class="card-promo-body">
+          <h3>¡Qué ofertón!</h3>
+          <p>Disfruta el cine por solo $45.</p>
+        </div>
+      </div>
+
+      <!-- Apartado 2: Términos y Condiciones... -->
+      <div class="card-promo" onclick="abrirModalPromo(2)">
+        <img class="card-promo-img" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCBqUCJcLvIYuG0TZHZHUS--KfRe4fbm7J5q7ej4IBH4a8jcrZ2pehjY4&s=10" alt="Términos y Condiciones">
+        <div class="card-promo-body">
+          <h3>Términos y Condiciones...</h3>
+          <p>Válido del 03 de septiembre al 30 de...</p>
+        </div>
+      </div>
+
+      <!-- Apartado 3: Atrapa tu peluche con... -->
+      <div class="card-promo" onclick="abrirModalPromo(3)">
+        <img class="card-promo-img" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSV_gu3yLoTBCBbg1vayl9scvMOW1aFADKIVxLmPC-Ul_I4ROEpvN90i9cK&s=10" alt="Atrapa tu peluche">
+        <div class="card-promo-body">
+          <h3>Atrapa tu peluche con...</h3>
+          <p>Diviértete atrapando un peluche con cupón.</p>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Ventana Modal de Información de la Promoción -->
+  <div class="modal-overlay" id="modalPromo">
+    <div class="modal-content">
+      <button class="modal-close-btn" onclick="cerrarModalPromo()">✕</button>
+      <img id="m-promo-img" class="modal-img-banner" src="" alt="Promoción">
+      <div class="modal-body">
+        <h2 id="m-promo-titulo"></h2>
+        <p id="m-promo-desc"></p>
+        <div class="terminos">
+          <strong>Términos y vigencia:</strong> <span id="m-promo-terminos"></span>
+        </div>
+        <button class="btn-aprovechar-promo" onclick="aprovecharPromo()">Aprovechar esta promoción</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pie de página escolar -->
+  <footer>
+    Nombre completo: Marrufo Alvarado Oyuki Alejandra | No.Control: a.24308051280591 | Semestre: 5to | Grupo: I | Especialidad: Programación
+  </footer>
+
+  <!-- Lógica JavaScript para desplegar detalles de cada promo -->
+  <script>
+    const promociones = {
+      1: {
+        titulo: "¡Qué ofertón! entradas a $45 c/u",
+        imagen: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSnUov2GcOR5eoD1jGypt4p07aKcqb9QPhdDy6kBSHOxX5u3fksKoJdB0KM&s=10",
+        descripcion: "¡El cine al mejor precio! Disfruta de tus películas favoritas en formato tradicional por solo $45.00 MXN por boleto los días martes, miércoles y jueves en cines participantes.",
+        terminos: "Válido del 3 al 30 de septiembre. Aplica para salas tradicionales 2D en funciones antes de las 18:00 hrs. No acumulable con otras promociones o cupones."
+      },
+      2: {
+        titulo: "Aviso Importante: Términos y Condiciones ¡Qué Ofertón!",
+        imagen: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCBqUCJcLvIYuG0TZHZHUS--KfRe4fbm7J5q7ej4IBH4a8jcrZ2pehjY4&s=10",
+        descripcion: "A partir del 25 de septiembre, los productos de dulcería dejan de participar en la promoción '¡QUÉ OFERTÓN!'. La promoción continuará vigente únicamente para la compra de boletos participantes. Los beneficios obtenidos con anterioridad a dicha fecha conservarán su validez conforme a las condiciones aplicables.",
+        terminos: "Válido del 03 de septiembre al 30 de septiembre. Consulta los términos completos y condiciones actualizadas de la promoción en www.cinepolis.com."
+      },
+      3: {
+        titulo: "Juega y Gana en las Máquinas de Premios Cinépolis",
+        imagen: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSV_gu3yLoTBCBbg1vayl9scvMOW1aFADKIVxLmPC-Ul_I4ROEpvN90i9cK&s=10",
+        descripcion: "¡Diviértete atrapando un peluche con cupón! Al jugar en nuestras máquinas garra en la zona de entretenimiento de Cinépolis, los peluches incluyen cupones canjeables por entradas gratis, palomitas o refrescos.",
+        terminos: "Si el peluche tiene cupón, canjéalo directamente en taquilla o dulcería presentando el boleto del cupón original. Aplican términos y condiciones generales del establecimiento."
+      }
+    };
+
+    function abrirModalPromo(id) {
+      const p = promociones[id];
+      if (!p) return;
+
+      document.getElementById('m-promo-titulo').innerText = p.titulo;
+      document.getElementById('m-promo-img').src = p.imagen;
+      document.getElementById('m-promo-desc').innerText = p.descripcion;
+      document.getElementById('m-promo-terminos').innerText = p.terminos;
+
+      document.getElementById('modalPromo').style.display = 'flex';
+    }
+
+    function cerrarModalPromo() {
+      document.getElementById('modalPromo').style.display = 'none';
+    }
+
+    function aprovecharPromo() {
+      alert('¡Promoción activada! Presenta la pantalla de tu teléfono o menciona la promoción al comprar tus boletos en taquilla o dulcería.');
+      cerrarModalPromo();
+    }
+  </script>
+
+</body>
+</html>

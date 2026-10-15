@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <title>CINEPOLIS - Peliculas</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { 
+      margin: 0; 
+      font-family: sans-serif; 
+      background-color: #0b132b; 
+      color: white; 
+      display: flex; 
+      flex-direction: column; 
+      min-height: 100vh; 
+    }
+
+    /* Barra de navegación */
+    nav { 
+      background-color: #0a1128; 
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between; 
+      padding: 12px 24px; 
+    }
+    .logo { font-size: 24px; font-weight: bold; text-decoration: none; color: white; margin-right: 15px; }
+    .nav-links { display: flex; gap: 15px; align-items: center; }
+    .nav-links a { color: white; text-decoration: none; font-size: 14px; padding: 6px 12px; border-radius: 6px; }
+    .nav-links a.active { border: 1px solid white; }
+    .icons { display: flex; gap: 10px; }
+    .btn-icon { background-color: #1d3557; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; text-decoration: none; display: inline-block; }
+
+    /* Contenido principal */
+    main { flex: 1; padding: 25px 40px; }
+
+    /* Selector de Cine */
+    .selector-cine-container {
+      background-color: #ffffff;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      cursor: pointer;
+      color: #1e293b;
+      margin-bottom: 25px;
+    }
+    .cine-icon-box {
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 6px 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #3b82f6;
+      font-size: 10px;
+      font-weight: bold;
+    }
+    .cine-icon-box span { font-size: 16px; margin-bottom: 2px; }
+    .selector-title { font-size: 18px; font-weight: bold; color: #1e3a8a; flex: 1; }
+
+    .lista-cines {
+      display: none;
+      background-color: #111d4a;
+      border: 1px solid #2563eb;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 30px;
+    }
+    .grid-cines { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin-top: 15px; }
+    .btn-cine { background-color: #1e293b; color: white; border: 1px solid #334155; padding: 12px 15px; border-radius: 8px; cursor: pointer; font-size: 14px; }
+
+    /* Acomodo de Películas en Grid de 3 columnas */
+    .cartelera-title { font-size: 22px; margin-bottom: 20px; }
+    .grid-peliculas {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 25px;
+      margin-top: 20px;
+    }
+
+    .card-pelicula {
+      background-color: #111d4a;
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 15px;
+      text-align: center;
+      border: 1px solid #1e293b;
+    }
+    .card-pelicula:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+      border-color: #3b82f6;
+    }
+    .card-pelicula img {
+      width: 100%;
+      max-width: 220px;
+      height: 310px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 12px;
+    }
+    .card-pelicula h4 { margin: 5px 0; font-size: 16px; color: #ffffff; }
+    .card-pelicula span { font-size: 12px; color: #60a5fa; font-weight: bold; }
+
+    /* Modal Flotante de Compra */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .modal-content {
+      background-color: #1e293b;
+      color: white;
+      padding: 25px;
+      border-radius: 12px;
+      max-width: 550px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+      box-shadow: 0 5px 25px rgba(0,0,0,0.5);
+    }
+    .modal-close {
+      position: absolute;
+      top: 15px; right: 20px;
+      background: #ef4444;
+      color: white;
+      border: none;
+      font-weight: bold;
+      border-radius: 5px;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+    .modal-info-item { margin-bottom: 8px; text-align: left; font-size: 14px; }
+    .modal-info-item strong { color: #60a5fa; }
+
+    /* Estilos del Proceso de Compra */
+    .btn-comprar {
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 15px;
+      font-size: 15px;
+    }
+    .btn-comprar:hover { background-color: #1d4ed8; }
+
+    .seccion-paso {
+      display: none;
+      margin-top: 15px;
+      border-top: 1px solid #334155;
+      padding-top: 15px;
+      text-align: left;
+    }
+    .btn-horario {
+      background-color: #0f172a;
+      color: #3b82f6;
+      border: 1px solid #3b82f6;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin: 4px;
+      font-weight: bold;
+    }
+    .btn-horario:hover, .btn-horario.selected {
+      background-color: #3b82f6;
+      color: white;
+    }
+
+    /* Asientos de la sala */
+    .pantalla-cine {
+      background: #60a5fa;
+      color: #0f172a;
+      text-align: center;
+      font-size: 11px;
+      font-weight: bold;
+      padding: 4px;
+      margin: 10px 0 15px 0;
+      border-radius: 4px;
+    }
+    .grid-asientos {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 8px;
+      justify-items: center;
+    }
+    .asiento {
+      width: 32px;
+      height: 32px;
+      background-color: #475569;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .asiento.seleccionado { background-color: #22c55e; }
+
+    .input-pago {
+      width: 100%;
+      padding: 8px;
+      margin: 5px 0 12px 0;
+      border-radius: 6px;
+      border: 1px solid #475569;
+      background: #0f172a;
+      color: white;
+      box-sizing: border-box;
+    }
+
+    /* Footer Escolar */
+    footer { 
+      background-color: #0a1128; 
+      text-align: center; 
+      padding: 15px; 
+      font-size: 14px; 
+      border-top: 1px solid rgba(255,255,255,0.1); 
+    }
+
+    @media (max-width: 768px) {
+      .grid-peliculas { grid-template-columns: repeat(1, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Barra de navegación -->
+  <nav>
+    <div style="display: flex; align-items: center;">
+      <a href="index.html" class="logo">cinépolis</a>
+      <div class="nav-links">
+        <a href="index.html" class="active">Películas</a>
+        <a href="alimentos.html">Alimentos</a>
+        <a href="club.html">Club Cinépolis</a>
+        <a href="promos.html">Promos</a>
+        <a href="especiales.html">Especiales</a>
+        <a href="coleccionables.html">Coleccionables</a>
+      </div>
+    </div>
+    <div class="icons">
+      <a href="buscar.html" class="btn-icon">&#128269;</a>
+      <a href="perfil.html" class="btn-icon">&#128100;</a>
+    </div>
+  </nav>
+
+  <!-- Contenido principal -->
+  <main>
+    
+    <!-- Selector de Cine -->
+    <div class="selector-cine-container" onclick="toggleCines()">
+      <div class="cine-icon-box">
+        <span>&#128205;</span>
+        Cines
+      </div>
+      <div class="selector-title" id="cine-seleccionado">Elige tu cine</div>
+      <span style="color: #64748b; font-size: 18px;">&#9660;</span>
+    </div>
+
+    <!-- Menú Desplegable con cines de Ciudad Juárez -->
+    <div class="lista-cines" id="menu-cines">
+      <h3>Selecciona una sucursal en Ciudad Juárez:</h3>
+      <div class="grid-cines">
+        <button class="btn-cine" onclick="seleccionarCine('Cinépolis Las Misiones')">Cinépolis Las Misiones</button>
+        <button class="btn-cine" onclick="seleccionarCine('Cinépolis VIP Las Misiones')">Cinépolis VIP Las Misiones</button>
+        <button class="btn-cine" onclick="seleccionarCine('Cinépolis Sendero Cd. Juárez')">Cinépolis Sendero Cd. Juárez</button>
+        <button class="btn-cine" onclick="seleccionarCine('Cinépolis Las Torres')">Cinépolis Las Torres</button>
+        <button class="btn-cine" onclick="seleccionarCine('Cinépolis Gran Patio Zaragoza')">Cinépolis Gran Patio Zaragoza</button>
+        <button class="btn-cine" onclick="seleccionarCine('Cinépolis Las Américas')">Cinépolis Las Américas</button>
+        <button class="btn-cine" onclick="seleccionarCine('Cinépolis Pinocelli')">Cinépolis Pinocelli</button>
+        <button class="btn-cine" onclick="seleccionarCine('Cinépolis La Monumental')">Cinépolis La Monumental</button>
+      </div>
+    </div>
+
+    <div class="cartelera-title">Películas en Cartelera</div>
+
+    <!-- Grid de Películas -->
+    <div class="grid-peliculas">
+      
+      <div class="card-pelicula" onclick="verDetalles(1)">
+        <img src="https://pimcore-content.cinepolis.com/assets/Mexico/Tickets/Movies/MadreSiniestra/Es/20_Po_ster_720x1022px__2.jpg" alt="Madre Siniestra">
+        <h4>Madre Siniestra</h4>
+        <span>Haz clic para detalles</span>
+      </div>
+
+      <div class="card-pelicula" onclick="verDetalles(2)">
+        <img src="https://m.media-amazon.com/images/M/MV5BY2YyMmM3M2ItNDc2Ny00MzM1LWI3ZWYtZTQzNjA0YzE1MzJiXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" alt="La Isla de las Muñecas">
+        <h4>La Isla de las Muñecas</h4>
+        <span>Haz clic para detalles</span>
+      </div>
+
+      <div class="card-pelicula" onclick="verDetalles(3)">
+        <img src="https://static.wikia.nocookie.net/doblaje/images/d/d7/Street_Fighter_-_Poster.jpg/revision/latest?cb=20260417083129&path-prefix=es" alt="Street Fighter">
+        <h4>Street Fighter</h4>
+        <span>Haz clic para detalles</span>
+      </div>
+
+      <div class="card-pelicula" onclick="verDetalles(4)">
+        <img src="https://lumiere-a.akamaihd.net/v1/images/captura_de_pantalla_2026-06-09_a_la_s_3_17ad65cf.png?region=0,0,1544,1930" alt="La Caída De La Ballena">
+        <h4>La Caída De La Ballena</h4>
+        <span>Haz clic para detalles</span>
+      </div>
+
+      <div class="card-pelicula" onclick="verDetalles(5)">
+        <img src="https://m.media-amazon.com/images/M/MV5BOGZjZWI1NTItOGUwZC00YWZkLWIxZWEtNzE2ZTIxODdjNmZmXkEyXkFqcGc@._V1_.jpg" alt="Resident Evil: Noche Cero">
+        <h4>Resident Evil: Noche Cero</h4>
+        <span>Haz clic para detalles</span>
+      </div>
+
+      <div class="card-pelicula" onclick="verDetalles(6)">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVP38VyqC4JGBNa03U1W6fF--FqIXD0_meqz7JEsxWPQ&s" alt="El Laberinto del Fauno">
+        <h4>El Laberinto del Fauno</h4>
+        <span>Haz clic para detalles</span>
+      </div>
+
+      <div class="card-pelicula" onclick="verDetalles(7)">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQuSaSIcf7MR6gi0Aamxj5yu0dtZLiYXEFfOn5nyfhm7A&s=10" alt="Un Mal Partido">
+        <h4>Un Mal Partido</h4>
+        <span>Haz clic para detalles</span>
+      </div>
+
+      <div class="card-pelicula" onclick="verDetalles(8)">
+        <img src="https://mx.web.img3.acsta.net/img/8d/ec/8dec5146abf05552a9eb54b6e6747261.jpg" alt="Avengers: Endgame">
+        <h4>Avengers: Endgame</h4>
+        <span>Haz clic para detalles</span>
+      </div>
+
+      <div class="card-pelicula" onclick="verDetalles(9)">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRI8Pp6C-ZrrnJAE2GXhomrwea-cXn3SHUnLVZtO_PP6w&s" alt="Verity: La Sombra De Un Engaño">
+        <h4>Verity: La Sombra De Un Engaño</h4>
+        <span>Haz clic para detalles</span>
+      </div>
+
+      <div class="card-pelicula" onclick="verDetalles(10)">
+        <img src="https://pimcore-content.cinepolis.com/assets/Mexico/Tickets/Movies/HopeElPrimerImpacto/Es/HOPE_Cinepolis_MX_DESKTOP_720_x_1022_2.jpg" alt="Hope: El Primer Impacto">
+        <h4>Hope: El Primer Impacto</h4>
+        <span>Haz clic para detalles</span>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Modal Flotante de Detalles y Compra de Boletos -->
+  <div class="modal-overlay" id="modalPelicula">
+    <div class="modal-content">
+      <button class="modal-close" onclick="cerrarModal()">X</button>
+      <h2 id="m-titulo" style="margin-top: 0; color: #60a5fa;"></h2>
+      <div class="modal-info-item"><strong>Categoría:</strong> <span id="m-categoria"></span></div>
+      <div class="modal-info-item"><strong>Clasificación:</strong> <span id="m-clasificacion"></span></div>
+      <div class="modal-info-item"><strong>Duración:</strong> <span id="m-duracion"></span></div>
+      <div class="modal-info-item"><strong>Sinopsis:</strong> <p id="m-sinopsis" style="margin-top: 5px; color: #cbd5e1; font-size: 13px;"></p></div>
+
+      <!-- BOTÓN PRINCIPAL COMPRAR BOLETOS -->
+      <button class="btn-comprar" id="btn-iniciar-compra" onclick="iniciarCompra()">Comprar Boletos</button>
+
+      <!-- PASO 1: SELECCIONAR HORARIO Y BOLETOS -->
+      <div id="paso-boletos" class="seccion-paso">
+        <h4 style="margin: 0 0 10px 0; color: #60a5fa;">1. Selecciona tu Horario:</h4>
+        <div>
+          <button class="btn-horario" onclick="seleccionarHorario(this)">14:30 PM</button>
+          <button class="btn-horario" onclick="seleccionarHorario(this)">17:15 PM</button>
+          <button class="btn-horario" onclick="seleccionarHorario(this)">20:00 PM</button>
+        </div>
+
+        <h4 style="margin: 15px 0 10px 0; color: #60a5fa;">2. Cantidad de Boletos:</h4>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <span>Adulto ($80.00):</span>
+          <input type="number" id="cant-adultos" value="1" min="0" max="10" style="width: 50px; text-align: center;" onchange="calcularTotal()">
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span>Niño/3era Edad ($65.00):</span>
+          <input type="number" id="cant-ninos" value="0" min="0" max="10" style="width: 50px; text-align: center;" onchange="calcularTotal()">
+        </div>
+
+        <p style="text-align: right; font-weight: bold; font-size: 16px; margin-top: 15px;">Total: $<span id="precio-total">80.00</span> MXN</p>
+        <button class="btn-comprar" onclick="irAAsientos()">Siguiente: Elegir Asientos</button>
+      </div>
+
+      <!-- PASO 2: SELECCIONAR ASIENTOS -->
+      <div id="paso-asientos" class="seccion-paso">
+        <h4 style="margin: 0 0 10px 0; color: #60a5fa;">3. Selecciona tus Asientos:</h4>
+        <div class="pantalla-cine">PANTALLA</div>
+        <div class="grid-asientos">
+          <div class="asiento" onclick="toggleAsiento(this)">A1</div>
+          <div class="asiento" onclick="toggleAsiento(this)">A2</div>
+          <div class="asiento" onclick="toggleAsiento(this)">A3</div>
+          <div class="asiento" onclick="toggleAsiento(this)">A4</div>
+          <div class="asiento" onclick="toggleAsiento(this)">A5</div>
+          <div class="asiento" onclick="toggleAsiento(this)">A6</div>
+          <div class="asiento" onclick="toggleAsiento(this)">B1</div>
+          <div class="asiento" onclick="toggleAsiento(this)">B2</div>
+          <div class="asiento" onclick="toggleAsiento(this)">B3</div>
+          <div class="asiento" onclick="toggleAsiento(this)">B4</div>
+          <div class="asiento" onclick="toggleAsiento(this)">B5</div>
+          <div class="asiento" onclick="toggleAsiento(this)">B6</div>
+        </div>
+        <button class="btn-comprar" style="margin-top: 20px;" onclick="irAPago()">Siguiente: Confirmar Pago</button>
+      </div>
+
+      <!-- PASO 3: FORMULARIO DE PAGO Y CONFIRMACIÓN -->
+      <div id="paso-pago" class="seccion-paso">
+        <h4 style="margin: 0 0 10px 0; color: #60a5fa;">4. Datos de Pago:</h4>
+        <form onsubmit="event.preventDefault(); finalizarCompra();">
+          <label style="font-size: 12px;">Nombre en la tarjeta:</label>
+          <input type="text" class="input-pago" placeholder="Juan Pérez" required>
+
+          <label style="font-size: 12px;">Número de tarjeta:</label>
+          <input type="text" class="input-pago" placeholder="1234 5678 9012 3456" required>
+
+          <div style="display: flex; gap: 10px;">
+            <div>
+              <label style="font-size: 12px;">Vencimiento:</label>
+              <input type="text" class="input-pago" placeholder="MM/AA" required>
+            </div>
+            <div>
+              <label style="font-size: 12px;">CVV:</label>
+              <input type="password" class="input-pago" placeholder="123" required>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-comprar">Pagar y Obtener Boletos</button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Pie de página escolar -->
+  <footer>
+    Nombre completo: Marrufo Alvarado Oyuki Alejandra | No.Control: a.24308051280591 | Semestre: 5to | Grupo: I | Especialidad: Programación
+  </footer>
+
+  <!-- Script interactivo -->
+  <script>
+    const peliculas = {
+      1: { titulo: "Madre Siniestra", categoria: "Terror / Suspenso", clasificacion: "B15", duracion: "102 min", sinopsis: "Una madre descubre oscuros secretos tras la desaparición inesperada de su familia." },
+      2: { titulo: "La Isla de las Muñecas", categoria: "Terror / Leyenda", clasificacion: "B15", duracion: "98 min", sinopsis: "Investigación paranormal alrededor de la famosa leyenda mexicana." },
+      3: { titulo: "Street Fighter", categoria: "Acción / Artes Marciales", clasificacion: "B", duracion: "120 min", sinopsis: "Los mejores luchadores del mundo se reúnen en un torneo legendario." },
+      4: { titulo: "La Caída De La Ballena", categoria: "Drama", clasificacion: "A", duracion: "115 min", sinopsis: "Una emotiva historia sobre el impacto ambiental tras el encallamiento de una ballena." },
+      5: { titulo: "Resident Evil: Noche Cero", categoria: "Acción / Terror", clasificacion: "C", duracion: "110 min", sinopsis: "Los orígenes de Umbrella y el brote del virus en las montañas Arklay." },
+      6: { titulo: "El Laberinto del Fauno", categoria: "Fantasía / Drama", clasificacion: "B15", duracion: "119 min", sinopsis: "Ofelia debe superar tres pruebas mágicas impuestas por un misterioso fauno." },
+      7: { titulo: "Un Mal Partido", categoria: "Comedia / Familiar", clasificacion: "B", duracion: "94 min", sinopsis: "Guillermo, un padre celoso y sobreprotector, ve su mundo de cabeza cuando su hija Mía inicia un noviazgo con un joven peculiar. Durante unas vacaciones familiares llenas de enredos, intentará probar que el novio es un 'mal partido', aprendiendo en el proceso la difícil tarea de soltar a sus hijos." },
+      8: { titulo: "Avengers: Endgame", categoria: "Acción / Ciencia Ficción", clasificacion: "B", duracion: "181 min", sinopsis: "Los Vengadores se reúnen para revertir el chasquido de Thanos." },
+      9: { titulo: "Verity: La Sombra De Un Engaño", categoria: "Suspenso / Intriga", clasificacion: "B15", duracion: "114 min", sinopsis: "Una joven escritora acepta completar la serie de libros de una autora exitosa, descubriendo secretos perturbadores en el proceso." },
+      10: { titulo: "Hope: El Primer Impacto", categoria: "Ciencia Ficción", clasificacion: "A", duracion: "125 min", sinopsis: "El primer contacto extraterrestre altera la vida humana para siempre." }
+    };
+
+    let horarioSeleccionado = false;
+
+    function toggleCines() {
+      var menu = document.getElementById('menu-cines');
+      menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+    }
+
+    function seleccionarCine(nombreCine) {
+      document.getElementById('cine-seleccionado').innerText = nombreCine;
+      document.getElementById('menu-cines').style.display = 'none';
+    }
+
+    function verDetalles(idPelicula) {
+      const p = peliculas[idPelicula];
+      if (p) {
+        document.getElementById('m-titulo').innerText = p.titulo;
+        document.getElementById('m-categoria').innerText = p.categoria;
+        document.getElementById('m-clasificacion').innerText = p.clasificacion;
+        document.getElementById('m-duracion').innerText = p.duracion;
+        document.getElementById('m-sinopsis').innerText = p.sinopsis;
+        
+        // Resetear proceso de compra
+        document.getElementById('btn-iniciar-compra').style.display = 'block';
+        document.getElementById('paso-boletos').style.display = 'none';
+        document.getElementById('paso-asientos').style.display = 'none';
+        document.getElementById('paso-pago').style.display = 'none';
+        
+        document.getElementById('modalPelicula').style.display = 'flex';
+      }
+    }
+
+    function cerrarModal() {
+      document.getElementById('modalPelicula').style.display = 'none';
+    }
+
+    /* Funciones del proceso de compra paso a paso */
+    function iniciarCompra() {
+      const cine = document.getElementById('cine-seleccionado').innerText;
+      if (cine === 'Elige tu cine') {
+        alert('Por favor, primero elige tu cine arriba en el botón "Elige tu cine".');
+        toggleCines();
+        cerrarModal();
+        return;
+      }
+      document.getElementById('btn-iniciar-compra').style.display = 'none';
+      document.getElementById('paso-boletos').style.display = 'block';
+    }
+
+    function seleccionarHorario(btn) {
+      document.querySelectorAll('.btn-horario').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      horarioSeleccionado = true;
+    }
+
+    function calcularTotal() {
+      const adultos = parseInt(document.getElementById('cant-adultos').value) || 0;
+      const ninos = parseInt(document.getElementById('cant-ninos').value) || 0;
+      const total = (adultos * 80) + (ninos * 65);
+      document.getElementById('precio-total').innerText = total.toFixed(2);
+    }
+
+    function irAAsientos() {
+      if (!horarioSeleccionado) {
+        alert('Por favor, selecciona un horario para tu función.');
+        return;
+      }
+      const total = parseFloat(document.getElementById('precio-total').innerText);
+      if (total <= 0) {
+        alert('Debes seleccionar al menos 1 boleto.');
+        return;
+      }
+      document.getElementById('paso-boletos').style.display = 'none';
+      document.getElementById('paso-asientos').style.display = 'block';
+    }
+
+    function toggleAsiento(asiento) {
+      asiento.classList.toggle('seleccionado');
+    }
+
+    function irAPago() {
+      const seleccionados = document.querySelectorAll('.asiento.seleccionado').length;
+      if (seleccionados === 0) {
+        alert('Selecciona tus asientos haciendo clic sobre ellos.');
+        return;
+      }
+      document.getElementById('paso-asientos').style.display = 'none';
+      document.getElementById('paso-pago').style.display = 'block';
+    }
+
+    function finalizarCompra() {
+      alert('¡Compra realizada con éxito! Se han enviado tus boletos digitales con código QR a tu correo.');
+      cerrarModal();
+    }
+  </script>
+
+</body>
+</html>

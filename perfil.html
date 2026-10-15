@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <title>SEPTIEMBRE - Mi Perfil</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { 
+      margin: 0; 
+      font-family: sans-serif; 
+      background-color: #0b132b; 
+      color: white; 
+      display: flex; 
+      flex-direction: column; 
+      min-height: 100vh; 
+    }
+
+    /* Barra de navegación */
+    nav { background-color: #0a1128; display: flex; align-items: center; justify-content: space-between; padding: 12px 24px; }
+    .logo { font-size: 24px; font-weight: bold; text-decoration: none; color: white; margin-right: 15px; }
+    .nav-links { display: flex; gap: 15px; align-items: center; }
+    .nav-links a { color: white; text-decoration: none; font-size: 14px; padding: 6px 12px; border-radius: 6px; }
+    .icons { display: flex; gap: 10px; }
+    .btn-icon { background-color: #1d3557; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; text-decoration: none; display: inline-block; }
+
+    /* Contenido Principal / Tarjeta de Perfil */
+    main { 
+      flex: 1; 
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
+      padding: 40px 20px; 
+    }
+
+    .card-login { 
+      background-color: #ffffff; 
+      color: #1f2937; 
+      border-radius: 12px; 
+      padding: 35px 40px; 
+      width: 100%; 
+      max-width: 480px; 
+      text-align: center; 
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3); 
+    }
+
+    .card-title { 
+      font-size: 20px; 
+      font-weight: bold; 
+      color: #0f172a; 
+      margin-bottom: 5px; 
+    }
+
+    .brand-logo { 
+      font-size: 32px; 
+      font-weight: bold; 
+      margin-bottom: 20px; 
+    }
+    .brand-logo .club { color: #f97316; } /* Color Naranja */
+    .brand-logo .cinepolis { color: #0a1128; }
+
+    .subtitle { 
+      font-size: 14px; 
+      color: #334155; 
+      margin-bottom: 15px; 
+    }
+
+    /* Botones principales */
+    .btn-primary { 
+      display: block; 
+      width: 100%; 
+      background-color: #3b82f6; 
+      color: white; 
+      border: none; 
+      padding: 12px 0; 
+      border-radius: 8px; 
+      font-size: 16px; 
+      font-weight: bold; 
+      cursor: pointer; 
+      text-decoration: none; 
+      box-sizing: border-box; 
+    }
+    .btn-primary:hover { background-color: #2563eb; }
+
+    .separator { 
+      margin: 25px 0 15px 0; 
+      font-size: 14px; 
+      color: #475569; 
+      line-height: 1.4; 
+    }
+
+    .btn-outline { 
+      display: block; 
+      width: 100%; 
+      background-color: transparent; 
+      color: #3b82f6; 
+      border: 1px solid #3b82f6; 
+      padding: 12px 0; 
+      border-radius: 8px; 
+      font-size: 16px; 
+      font-weight: bold; 
+      cursor: pointer; 
+      text-decoration: none; 
+      box-sizing: border-box; 
+    }
+    .btn-outline:hover { background-color: #f0f6ff; }
+
+    hr { 
+      border: none; 
+      border-top: 1px solid #e2e8f0; 
+      margin: 30px 0 20px 0; 
+    }
+
+    .footer-card-text { 
+      font-size: 14px; 
+      color: #334155; 
+      margin-bottom: 15px; 
+    }
+
+    .link-vincular { 
+      color: #3b82f6; 
+      font-weight: bold; 
+      text-decoration: none; 
+      font-size: 15px; 
+      cursor: pointer;
+    }
+    .link-vincular:hover { text-decoration: underline; }
+
+    /* Estilos para Formularios */
+    .form-container {
+      display: none; /* Ocultos por defecto */
+      text-align: left;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: bold;
+      color: #334155;
+      margin-bottom: 5px;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+    .btn-back {
+      background: none;
+      border: none;
+      color: #3b82f6;
+      font-weight: bold;
+      cursor: pointer;
+      margin-bottom: 15px;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Footer Escolar */
+    footer { 
+      background-color: #0a1128; 
+      text-align: center; 
+      padding: 15px; 
+      font-size: 14px; 
+      border-top: 1px solid rgba(255,255,255,0.1); 
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Barra de navegación -->
+  <nav>
+    <div style="display: flex; align-items: center;">
+      <a href="index.html" class="logo">cinépolis</a>
+      <div class="nav-links">
+        <a href="index.html">Películas</a>
+        <a href="alimentos.html">Alimentos</a>
+        <a href="club.html">Club Cinépolis</a>
+        <a href="promos.html">Promos</a>
+        <a href="especiales.html">Especiales</a>
+        <a href="coleccionables.html">Coleccionables</a>
+      </div>
+    </div>
+    <div class="icons">
+      <a href="buscar.html" class="btn-icon">&#128269;</a>
+      <a href="perfil.html" class="btn-icon">&#128100;</a>
+    </div>
+  </nav>
+
+  <!-- Contenido principal -->
+  <main>
+    <div class="card-login">
+
+      <!-- MENÚ INICIAL (Opciones) -->
+      <div id="menu-inicial">
+        <div class="card-title">Inicia sesión o crea una cuenta en</div>
+        <div class="brand-logo">
+          <span class="club">CLUB</span> <span class="cinepolis">cinépolis</span>
+        </div>
+        <div class="subtitle">¿Ya tienes tu cuenta digital con QR?</div>
+
+        <!-- Clic abre Formulario de Iniciar Sesión -->
+        <button class="btn-primary" onclick="mostrarSeccion('form-login')">Inicia sesión</button>
+
+        <div class="separator">
+          o<br>
+          crea una cuenta para comenzar a disfrutar los beneficios de ser socio
+        </div>
+
+        <!-- Clic abre Formulario de Crear Cuenta -->
+        <button class="btn-outline" onclick="mostrarSeccion('form-registro')">Crea tu cuenta</button>
+
+        <hr>
+
+        <div class="footer-card-text">
+          Si tienes una tarjeta física Club Cinépolis, actualiza a una digital
+        </div>
+
+        <!-- Clic abre Formulario de Vincular Cuenta -->
+        <span class="link-vincular" onclick="mostrarSeccion('form-vincular')">Vincular cuenta</span>
+      </div>
+
+      <!-- FORMULARIO 1: INICIAR SESIÓN -->
+      <div id="form-login" class="form-container">
+        <button class="btn-back" onclick="mostrarSeccion('menu-inicial')">&#8592; Volver</button>
+        <h2 style="margin-top:0; color:#0f172a;">Iniciar Sesión</h2>
+        <form onsubmit="event.preventDefault(); alert('¡Sesión iniciada con éxito!');">
+          <div class="form-group">
+            <label>Correo electrónico</label>
+            <input type="email" placeholder="ejemplo@correo.com" required>
+          </div>
+          <div class="form-group">
+            <label>Contraseña</label>
+            <input type="password" placeholder="••••••••" required>
+          </div>
+          <button type="submit" class="btn-primary">Ingresar</button>
+        </form>
+      </div>
+
+      <!-- FORMULARIO 2: CREAR CUENTA -->
+      <div id="form-registro" class="form-container">
+        <button class="btn-back" onclick="mostrarSeccion('menu-inicial')">&#8592; Volver</button>
+        <h2 style="margin-top:0; color:#0f172a;">Crea tu Cuenta</h2>
+        <form onsubmit="event.preventDefault(); alert('¡Cuenta creada correctamente!');">
+          <div class="form-group">
+            <label>Nombre completo</label>
+            <input type="text" placeholder="Tu nombre" required>
+          </div>
+          <div class="form-group">
+            <label>Correo electrónico</label>
+            <input type="email" placeholder="ejemplo@correo.com" required>
+          </div>
+          <div class="form-group">
+            <label>Contraseña</label>
+            <input type="password" placeholder="Crea una contraseña" required>
+          </div>
+          <button type="submit" class="btn-primary">Registrarme</button>
+        </form>
+      </div>
+
+      <!-- FORMULARIO 3: VINCULAR CUENTA -->
+      <div id="form-vincular" class="form-container">
+        <button class="btn-back" onclick="mostrarSeccion('menu-inicial')">&#8592; Volver</button>
+        <h2 style="margin-top:0; color:#0f172a;">Vincular Tarjeta</h2>
+        <form onsubmit="event.preventDefault(); alert('¡Tarjeta vinculada con éxito!');">
+          <div class="form-group">
+            <label>Número de Tarjeta Club Cinépolis</label>
+            <input type="text" placeholder="16 dígitos de tu tarjeta" required>
+          </div>
+          <div class="form-group">
+            <label>Correo asociado</label>
+            <input type="email" placeholder="ejemplo@correo.com" required>
+          </div>
+          <button type="submit" class="btn-primary">Vincular a Digital</button>
+        </form>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Pie de página escolar -->
+  <footer>
+    Nombre completo: Marrufo Alvarado Oyuki Alejandra | No.Control: a.24308051280591 | Semestre: 5to | Grupo: I | Especialidad: Programación
+  </footer>
+
+  <!-- Código JavaScript para alternar entre formularios -->
+  <script>
+    function mostrarSeccion(idSeccion) {
+      // Ocultar la pantalla inicial y todos los formularios
+      document.getElementById('menu-inicial').style.display = 'none';
+      document.getElementById('form-login').style.display = 'none';
+      document.getElementById('form-registro').style.display = 'none';
+      document.getElementById('form-vincular').style.display = 'none';
+
+      // Mostrar únicamente la sección seleccionada
+      document.getElementById(idSeccion).style.display = 'block';
+    }
+  </script>
+
+</body>
+</html>
