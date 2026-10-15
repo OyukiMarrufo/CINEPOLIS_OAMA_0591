@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <title>CINEPOLIS - Coleccionables</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { 
+      margin: 0; 
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; 
+      background-color: #03081e; 
+      color: white; 
+      display: flex; 
+      flex-direction: column; 
+      min-height: 100vh; 
+      overflow-x: hidden;
+    }
+
+    /* Barra de navegación principal */
+    nav { 
+      background-color: #0a1128; 
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between; 
+      padding: 12px 24px; 
+    }
+    .logo { font-size: 24px; font-weight: bold; text-decoration: none; color: white; margin-right: 15px; }
+    .nav-links { display: flex; gap: 15px; align-items: center; }
+    .nav-links a { color: white; text-decoration: none; font-size: 14px; padding: 6px 12px; border-radius: 6px; }
+    .nav-links a.active { border: 1px solid white; background-color: #1d3557; }
+    .icons { display: flex; gap: 10px; }
+    .btn-icon { background-color: #1d3557; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; text-decoration: none; display: inline-block; }
+
+    /* Encabezado Coleccionables */
+    .coleccionables-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 25px 50px 15px 50px;
+    }
+    .title-container {
+      position: relative;
+      padding-bottom: 8px;
+    }
+    .header-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+    .title-container::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background-color: #2563eb;
+      border-radius: 2px;
+    }
+    .btn-cerrar-modal {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 14px;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .btn-cerrar-box {
+      background-color: #3b82f6;
+      color: white;
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    /* Slider / Carrusel de Tarjetas */
+    .slider-wrapper {
+      position: relative;
+      padding: 10px 50px;
+      display: flex;
+      align-items: center;
+    }
+
+    .btn-nav-slider {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 10;
+      background-color: #0d1a3a;
+      color: white;
+      border: 1px solid #1e3a8a;
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 18px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      transition: background-color 0.2s;
+    }
+    .btn-nav-slider:hover { background-color: #2563eb; }
+    .btn-nav-prev { left: 20px; }
+    .btn-nav-next { right: 20px; }
+
+    .cards-container {
+      display: flex;
+      gap: 18px;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      padding: 15px 5px;
+      scrollbar-width: none;
+    }
+    .cards-container::-webkit-scrollbar { display: none; }
+
+    /* Estilo de Tarjeta Individual */
+    .card-coleccionable {
+      min-width: 215px;
+      max-width: 215px;
+      height: 340px;
+      border-radius: 20px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      background-color: #0a1b42;
+    }
+    .card-coleccionable:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 25px rgba(59, 130, 246, 0.4);
+    }
+
+    .card-top-img {
+      height: 190px;
+      width: 100%;
+      background-color: #f1f5f9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .card-top-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .card-bottom-content {
+      flex: 1;
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      text-align: left;
+    }
+    .card-bottom-content h3 {
+      margin: 0 0 8px 0;
+      font-size: 17px;
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1.2;
+    }
+    .card-bottom-content p {
+      margin: 0;
+      font-size: 12px;
+      color: #d1d5db;
+      line-height: 1.35;
+      font-weight: 500;
+    }
+
+    /* Modal Flotante de Detalles */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    .modal-content {
+      background-color: #0a1b42;
+      border: 1px solid #2563eb;
+      color: white;
+      border-radius: 16px;
+      max-width: 500px;
+      width: 100%;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+      animation: fadeIn 0.2s ease-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .modal-img-banner {
+      width: 100%;
+      height: 230px;
+      object-fit: cover;
+      display: block;
+      background-color: #f1f5f9;
+    }
+
+    .modal-close-btn {
+      position: absolute;
+      top: 12px;
+      right: 15px;
+      background: rgba(0, 0, 0, 0.6);
+      color: white;
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    .modal-body {
+      padding: 25px;
+      text-align: left;
+    }
+    .modal-body h2 {
+      margin-top: 0;
+      color: #ffffff;
+      font-size: 22px;
+    }
+    .modal-body p {
+      color: #cbd5e1;
+      font-size: 14px;
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+    .modal-body .precio-tag {
+      font-size: 20px;
+      font-weight: bold;
+      color: #60a5fa;
+      margin-bottom: 20px;
+    }
+    .btn-adquirir {
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 15px;
+      cursor: pointer;
+      text-align: center;
+    }
+    .btn-adquirir:hover { background-color: #1d4ed8; }
+
+    main { flex: 1; }
+
+    /* Footer Escolar */
+    footer { 
+      background-color: #0a1128; 
+      text-align: center; 
+      padding: 15px; 
+      font-size: 14px; 
+      border-top: 1px solid rgba(255,255,255,0.1); 
+      margin-top: auto;
+    }
+
+    @media (max-width: 768px) {
+      .coleccionables-header { padding: 20px 20px 10px 20px; }
+      .slider-wrapper { padding: 10px 20px; }
+      .btn-nav-prev { left: 5px; }
+      .btn-nav-next { right: 5px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Barra de navegación principal -->
+  <nav>
+    <div style="display: flex; align-items: center;">
+      <a href="index.html" class="logo">cinépolis</a>
+      <div class="nav-links">
+        <a href="index.html">Películas</a>
+        <a href="alimentos.html">Alimentos</a>
+        <a href="club.html">Club Cinépolis</a>
+        <a href="promos.html">Promos</a>
+        <a href="especiales.html">Especiales</a>
+        <a href="coleccionables.html" class="active">Coleccionables</a>
+      </div>
+    </div>
+    <div class="icons">
+      <a href="buscar.html" class="btn-icon">&#128269;</a>
+      <a href="perfil.html" class="btn-icon">&#128100;</a>
+    </div>
+  </nav>
+
+  <main>
+    <!-- Encabezado Coleccionables -->
+    <div class="coleccionables-header">
+      <div class="title-container">
+        <span class="header-title">Coleccionables</span>
+      </div>
+      <a href="index.html" class="btn-cerrar-modal">
+        Cerrar <span class="btn-cerrar-box">✕</span>
+      </a>
+    </div>
+
+    <!-- Carrusel de Coleccionables -->
+    <div class="slider-wrapper">
+      <button class="btn-nav-slider btn-nav-prev" onclick="scrollSlider(-240)">&#8592;</button>
+      
+      <div class="cards-container" id="col-slider">
+
+        <!-- 1. Palomera Iron Man -->
+        <div class="card-coleccionable" onclick="abrirModalColeccionable(1)">
+          <div class="card-top-img" style="background-color: #b0b0b0;">
+            <img src="https://pimcore-content.cinepolis.com/assets/Mexico/NavBars/Coleccionables/Coleccionables/PalomeraIronMan/Es/Palomera_Ironman.jpg" alt="Palomera Iron Man" style="object-fit: contain; padding: 10px;">
+          </div>
+          <div class="card-bottom-content">
+            <h3>¡Lleva el poder de Iron Man a t...</h3>
+            <p>Disfruta tu película con estilo.</p>
+          </div>
+        </div>
+
+        <!-- 2. Palomera Grabadora Retro -->
+        <div class="card-coleccionable" onclick="abrirModalColeccionable(2)">
+          <div class="card-top-img" style="background-color: #f7f7f7;">
+            <img src="https://pimcore-content.cinepolis.com/assets/Mexico/NavBars/Coleccionables/Coleccionables/LaIsla/Es/La_isla_Nav.jpg" alt="Grabadora Retro" style="object-fit: contain; padding: 10px;">
+          </div>
+          <div class="card-bottom-content">
+            <h3>¡Lleva la aventura...</h3>
+            <p>Un tesoro digno de coleccionar.</p>
+          </div>
+        </div>
+
+        <!-- 3. Vaso Coyote vs Acme -->
+        <div class="card-coleccionable" onclick="abrirModalColeccionable(3)">
+          <div class="card-top-img">
+            <img src="https://pimcore-content.cinepolis.com/assets/Mexico/NavBars/Coleccionables/Coleccionables/VasoCoyote/Es/nav_bar.jpg" alt="Vaso Coyote vs Acme">
+          </div>
+          <div class="card-bottom-content">
+            <h3>Vaso Coyote vs Acme</h3>
+            <p>¡Colecciónalo antes de que desaparezca!</p>
+          </div>
+        </div>
+
+        <!-- 4. Palomera Sombrero Seleccionador Harry Potter -->
+        <div class="card-coleccionable" onclick="abrirModalColeccionable(4)">
+          <div class="card-top-img">
+            <img src="https://pimcore-content.cinepolis.com/assets/Mexico/NavBars/Coleccionables/Coleccionables/PalomeraHarryPotter/Es/palomera_Harry_Potter.jpg" alt="Palomera Sombrero Harry Potter">
+          </div>
+          <div class="card-bottom-content">
+            <h3>¡El sombrero te espera!</h3>
+            <p>Un clásico para coleccionar</p>
+          </div>
+        </div>
+
+        <!-- 5. Vaso Promocional 3D 25 Años Harry Potter -->
+        <div class="card-coleccionable" onclick="abrirModalColeccionable(5)">
+          <div class="card-top-img">
+            <img src="https://pimcore-content.cinepolis.com/assets/Mexico/NavBars/Coleccionables/Coleccionables/VasosHarryPotter/Es/vasos_Harry_Potter.jpg" alt="Vaso 25 años Harry Potter">
+          </div>
+          <div class="card-bottom-content">
+            <h3>25 años de magia ✨</h3>
+            <p>Lleva tu casa favorita contigo.</p>
+          </div>
+        </div>
+
+        <!-- 6. Vasos Paw Patrol -->
+        <div class="card-coleccionable" onclick="abrirModalColeccionable(6)">
+          <div class="card-top-img">
+            <img src="https://pimcore-content.cinepolis.com/assets/Mexico/NavBars/Coleccionables/Coleccionables/VasosPawPatrol/Es/vasos_Paw_Patrol.jpg" alt="Vasos Paw Patrol">
+          </div>
+          <div class="card-bottom-content">
+            <h3>¡A la aventura!</h3>
+            <p>Colecciona a tus vasos favoritos.</p>
+          </div>
+        </div>
+
+      </div>
+
+      <button class="btn-nav-slider btn-nav-next" onclick="scrollSlider(240)">&#8594;</button>
+    </div>
+  </main>
+
+  <!-- Ventana Modal de Información -->
+  <div class="modal-overlay" id="modalColeccionable">
+    <div class="modal-content">
+      <button class="modal-close-btn" onclick="cerrarModalColeccionable()">✕</button>
+      <img id="m-col-img" class="modal-img-banner" src="" alt="Coleccionable">
+      <div class="modal-body">
+        <h2 id="m-col-titulo"></h2>
+        <div class="precio-tag" id="m-col-precio"></div>
+        <p id="m-col-desc"></p>
+        <button class="btn-adquirir" onclick="adquirirColeccionable()">Consultar disponibilidad en dulcería</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pie de página escolar -->
+  <footer>
+    Nombre completo: Marrufo Alvarado Oyuki Alejandra | No.Control: a.24308051280591 | Semestre: 5to | Grupo: I | Especialidad: Programación
+  </footer>
+
+  <!-- Lógica JavaScript para slider y modal -->
+  <script>
+    const coleccionables = {
+      1: {
+        titulo: "¡Lleva el poder de Iron Man a tu función!",
+        precio: "Precio especial en dulcería",
+        imagen: "https://pimcore-content.cinepolis.com/assets/Mexico/NavBars/Coleccionables/Coleccionables/PalomeraIronMan/Es/Palomera_Ironman.jpg",
+        descripcion: "Exclusiva palomera 3D con forma del casco articulado de Iron Man. Disfruta tu película con estilo y añade una pieza de colección única a tu repisa."
+      },
+      2: {
+        titulo: "¡Lleva la aventura retro!",
+        precio: "$420.00 MXN",
+        imagen: "https://pimcore-content.cinepolis.com/assets/Mexico/NavBars/Coleccionables/Coleccionables/LaIsla/Es/La_isla_Nav.jpg",
+        descripcion: "Palomera 3D diseño Cassette Boombox retro. Un tesoro lleno de nostalgia noventera digno de coleccionar en tus visitas al cine."
+      },
+      3: {
+        titulo: "Vaso Coyote vs Acme",
+        precio: "$119.00 MXN",
+        imagen: "https://pimcore-content.cinepolis.com/assets/Mexico/NavBars/Coleccionables/Coleccionables/VasoCoyote/Es/nav_bar.jpg",
+        descripcion: "Vaso coleccionable con popote de la película Coyote vs Acme. ¡Edición limitada! Colecciónalo en dulcería antes de que desaparezca."
+      },
+      4: {
+        titulo: "¡El sombrero te espera! - Palomera Harry Potter",
+        precio: "$859.00 MXN",
+        imagen: "https://pimcore-content.cinepolis.com/assets/Mexico/NavBars/Coleccionables/Coleccionables/PalomeraHarryPotter/Es/palomera_Harry_Potter.jpg",
+        descripcion: "Palomera 3D de colección con el Sombrero Seleccionador sobre los libros mágicos de Hogwarts. Un verdadero clásico para los fans del mundo mágico."
+      },
+      5: {
+        titulo: "25 años de magia ✨ - Vaso Harry Potter",
+        precio: "$365.00 MXN",
+        imagen: "https://pimcore-content.cinepolis.com/assets/Mexico/NavBars/Coleccionables/Coleccionables/VasosHarryPotter/Es/vasos_Harry_Potter.jpg",
+        descripcion: "Vaso Promocional 3D Aniversario 25 Años de Harry Potter. Incluye funda textil interactiva representativa de las 4 casas de Hogwarts."
+      },
+      6: {
+        titulo: "¡A la aventura! - Vasos Paw Patrol",
+        precio: "$39.00 MXN c/u",
+        imagen: "https://pimcore-content.cinepolis.com/assets/Mexico/NavBars/Coleccionables/Coleccionables/VasosPawPatrol/Es/vasos_Paw_Patrol.jpg",
+        descripcion: "Vasos promocionales Pop Cup de la película Paw Patrol. Colecciona a tus personajes favoritos de la patrulla canina al comprar tu combo infantil."
+      }
+    };
+
+    function scrollSlider(distance) {
+      const container = document.getElementById('col-slider');
+      container.scrollBy({ left: distance, behavior: 'smooth' });
+    }
+
+    function abrirModalColeccionable(id) {
+      const c = coleccionables[id];
+      if (!c) return;
+
+      document.getElementById('m-col-titulo').innerText = c.titulo;
+      document.getElementById('m-col-precio').innerText = c.precio;
+      document.getElementById('m-col-img').src = c.imagen;
+      document.getElementById('m-col-desc').innerText = c.descripcion;
+
+      document.getElementById('modalColeccionable').style.display = 'flex';
+    }
+
+    function cerrarModalColeccionable() {
+      document.getElementById('modalColeccionable').style.display = 'none';
+    }
+
+    function adquirirColeccionable() {
+      alert('¡Pregunta por la disponibilidad de este producto directamente en las barras de dulcería de tu Cinépolis más cercano!');
+      cerrarModalColeccionable();
+    }
+  </script>
+
+</body>
+</html>
